@@ -2,41 +2,35 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"personal/mal/go/src/readline"
 )
 
-import (
-	"readline"
-)
+const PROMPT = "user> "
 
-// read
-func READ(str string) string {
+func READ() (string, error) {
+	return readline.Readline(PROMPT)
+}
+
+func EVAL(str string) string {
 	return str
 }
 
-// eval
-func EVAL(ast string, env string) string {
-	return ast
+func PRINT(str string) {
+	fmt.Println(str)
 }
 
-// print
-func PRINT(exp string) string {
-	return exp
-}
+func rep() {
 
-// repl
-func rep(str string) string {
-	return PRINT(EVAL(READ(str), ""))
+	for {
+		in, err := READ()
+		if err != nil {
+			break
+		}
+		eval := EVAL(in)
+		PRINT(eval)
+	}
 }
 
 func main() {
-	// repl loop
-	for {
-		text, err := readline.Readline("user> ")
-		text = strings.TrimRight(text, "\n")
-		if err != nil {
-			return
-		}
-		fmt.Println(rep(text))
-	}
+	rep()
 }

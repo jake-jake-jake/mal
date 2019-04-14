@@ -2,65 +2,35 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"personal/mal/go/src/readline"
 )
 
-import (
-	"printer"
-	"reader"
-	"readline"
-	. "types"
-)
+const PROMPT = "user> "
 
-// read
-func READ(str string) (MalType, error) {
-	return reader.Read_str(str)
+func READ() (string, error) {
+	return readline.Readline(PROMPT)
 }
 
-// eval
-func EVAL(ast MalType, env string) (MalType, error) {
-	return ast, nil
+func EVAL(str string) string {
+	return str
 }
 
-// print
-func PRINT(exp MalType) (string, error) {
-	return printer.Pr_str(exp, true), nil
+func PRINT(str string) {
+	fmt.Println(str)
 }
 
-// repl
-func rep(str string) (MalType, error) {
-	var exp MalType
-	var res string
-	var e error
-	if exp, e = READ(str); e != nil {
-		return nil, e
+func rep() {
+
+	for {
+		in, err := READ()
+		if err != nil {
+			break
+		}
+		eval := EVAL(in)
+		PRINT(eval)
 	}
-	if exp, e = EVAL(exp, ""); e != nil {
-		return nil, e
-	}
-	if res, e = PRINT(exp); e != nil {
-		return nil, e
-	}
-	return res, nil
 }
 
 func main() {
-	// repl loop
-	for {
-		text, err := readline.Readline("user> ")
-		text = strings.TrimRight(text, "\n")
-		if err != nil {
-			return
-		}
-		var out MalType
-		var e error
-		if out, e = rep(text); e != nil {
-			if e.Error() == "<empty line>" {
-				continue
-			}
-			fmt.Printf("Error: %v\n", e)
-			continue
-		}
-		fmt.Printf("%v\n", out)
-	}
+	rep()
 }
